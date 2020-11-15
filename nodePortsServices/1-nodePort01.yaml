@@ -8,8 +8,6 @@ metadata:
     available: "true"
 spec:
   type: NodePort
-  selector:
-    app: MyApp
   ports:
       # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
     - port: 80

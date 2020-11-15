@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: find-nodeport-
+  namespace: argo
+spec:
+  entrypoint: find-nodeport
+  templates:
+  
+  - name: find-nodeport
+    steps:
+    - - name: allocate-nodeports
+        template: allocate
+    - - name: pyspark-executor
+        template: pyspark
+
+  - name: allocate
+    container:
+      image: pinholuc/gut-sant:latest
+      command: [python]
+      args: [./find_nodeport_patch_selector.py]
+
+  - name: pyspark
+    metadata:
+      labels:
+        user: x247451
+    container:
+      image: ubuntu:latest
+      # Just spin & wait forever
+      command: [ "/bin/bash", "-c", "--" ]
+      args: [ "while true; do sleep 30; done;" ]
+

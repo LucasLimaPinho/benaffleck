@@ -1,0 +1,95 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: find-nodeport-
+  namespace: argo
+spec:
+  entrypoint: find-nodeport
+  templates:
+  
+  - name: find-nodeport
+    steps:
+    - - name: generate-nodeports
+        template: generate-nodeports
+    - - name: consume-nodeports
+        template: print-nodeports
+        arguments:
+          parameters:
+          - name: nodeport1
+            value: "{{steps.generate-nodeports.outputs.parameters.nodeport1}}"
+          - name: nodeport2
+            value: "{{steps.generate-nodeports.outputs.parameters.nodeport2}}"
+          - name: servicehost1
+            value: "{{steps.generate-nodeports.outputs.parameters.servicehost1}}"
+          - name: servicehost2
+            value: "{{steps.generate-nodeports.outputs.parameters.servicehost2}}"
+          - name: serviceport1
+            value: "{{steps.generate-nodeports.outputs.parameters.serviceport1}}"
+          - name: serviceport2
+            value: "{{steps.generate-nodeports.outputs.parameters.serviceport2}}"
+          - name: ip1 
+            value: "{{steps.generate-nodeports.outputs.parameters.ip1}}"
+          - name: ip2 
+            value: "{{steps.generate-nodeports.outputs.parameters.ip2}}"
+
+  - name: generate-nodeports
+    container:
+      image: pinholuc/gut-sant:latest
+      command: [python]
+      args: [./find_nodeport.py]
+    outputs:
+      parameters:
+      - name: nodeport1
+        valueFrom:
+          path: /tmp/nodeport1.txt
+      - name: nodeport2
+        valueFrom:
+          path: /tmp/nodeport2.txt
+      - name: servicehost1
+        valueFrom:
+          path: /tmp/servicehost1.txt
+      - name: servicehost2
+        valueFrom:
+          path: /tmp/servicehost2.txt
+      - name: serviceport1
+        valueFrom:
+          path: /tmp/serviceport1.txt
+      - name: serviceport2
+        valueFrom:
+          path: /tmp/serviceport2.txt
+      - name: ip1
+        valueFrom:
+          path: /tmp/ip1.txt
+      - name: ip2
+        valueFrom:
+          path: /tmp/ip2.txt
+
+  - name: print-nodeports
+    metadata:
+      labels:
+        app: MyApp
+    inputs:
+      parameters:
+      - name: nodeport1 
+      - name: nodeport2 
+      - name: servicehost1 
+      - name: servicehost2
+      - name: serviceport1
+      - name: serviceport2
+      - name: ip1
+      - name: ip2
+    container:
+      env:
+      - name: "{{inputs.parameters.servicehost1}}"
+        value: "{{inputs.parameters.ip1}}"
+      - name: "{{inputs.parameters.servicehost2}}"
+        value: "{{inputs.parameters.ip2}}"
+      - name: "{{inputs.parameters.serviceport1}}"
+        value: "{{inputs.parameters.nodeport1}}"
+      - name: "{{inputs.parameters.serviceport2}}"
+        value: "{{inputs.parameters.nodeport2}}"
+      image: ubuntu:latest
+      # Just spin & wait forever
+      command: [ "/bin/bash", "-c", "--" ]
+      args: [ "while true; do sleep 30; done;" ]
+

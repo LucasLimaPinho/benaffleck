@@ -1,12 +1,12 @@
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: services-list-2
+  name: services-list-3
 subjects:
 - kind: ServiceAccount
   name: default
   namespace: argo
 roleRef:
   kind: ClusterRole
-  name: services-list-2
+  name: services-list-3
   apiGroup: rbac.authorization.k8s.io

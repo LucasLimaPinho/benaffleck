@@ -10,6 +10,12 @@ spec:
     steps:
     - - name: generate-nodeports
         template: get-nodeports
+    - - name: consume-nodeports
+        template: print-nodeports
+        arguments:
+          parameters:
+            - name: nodeports 
+              value: "{{steps.generate-nodeports.outputs.result}}"
   
   - name: get-nodeports
     script:
@@ -19,13 +25,26 @@ spec:
         import kubernetes
         from kubernetes import client, config
         import urllib3
+        num=2
+        ns = "argo"
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        config.load_kube_config()
+        config.load_incluster_config()
         v1 = client.CoreV1Api()
         available_ports = []
         ret = v1.list_namespaced_service(namespace="argo", label_selector="app=sant,available=true")
-        for i in ret.items:
+        for i in ret.items[:num]:
           [available_ports.append(i.spec.ports[j].node_port) for j in range(len(i.spec.ports))]
-          print(available_ports)
-        print("Mia & Sebastian")
+        print("{'containerPort': 100}")
+
+  - name: print-nodeports
+    inputs:
+      parameters:
+        - name: nodeports
+    container:
+      image: docker/whalesay:latest
+      command: [cowsay]
+      args: ["{{inputs.parameters.nodeports}}"]
+      #ports: [{'containerPort': $DB_PORT}]
+      ports: [{{inputs.parameters.nodeports}}]
+
 

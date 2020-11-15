@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: find-nodeport-
+  namespace: argo
+spec:
+  entrypoint: find-nodeport
+  templates:
+  
+  - name: find-nodeport
+    steps:
+    - - name: generate-nodeports
+        template: generate-nodeports
+        arguments:
+          parameters:
+          - name: num
+            value: "{{item}}"
+        withItems: [1,2]
+    - - name: consume-nodeports
+        template: print-nodeports
+        arguments:
+          parameters:
+          - name: num
+            value: "{{item.num}}"
+        withParam: "{{steps.generate-nodeports.outputs.result}}"
+
+
+  - name: generate-nodeports
+    inputs:
+      parameters:
+      - name: num
+    script:
+      image: pinholuc/gut-sant:latest
+      command: [python]
+      source: |
+      
+        import kubernetes
+        from kubernetes import client, config
+        import urllib3
+        import sys
+        import json
+        # Number of nodePorts per pyspark notebook
+        num = 2
+        j = {{inputs.parameters.num}}
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        config.load_incluster_config()
+        v1 = client.CoreV1Api()
+        available_ports = []
+        service_names = []
+        ips = []
+        ret = v1.list_namespaced_service(namespace="argo", label_selector="app=sant,available=true")
+        for i in ret.items[:num]:
+          [available_ports.append(i.spec.ports[j].node_port) for j in range(len(i.spec.ports))]
+        if (len(available_ports) < num):
+          print("There are no sufficient ports available for this workflow.")
+          sys.exit(1)
+        res = {"num": available_ports[j-1]}
+        print(json.dumps(res))
+    
+  - name: print-nodeports
+    inputs:
+      parameters:
+      - name: num
+    container:
+      image: docker/whalesay:latest
+      command: [cowsay]
+      args: ["{{inputs.parameters.num}}"]
+      ports: {{inputs.parameters.num}}
+
+
