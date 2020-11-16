@@ -34,8 +34,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 config.load_incluster_config()
 v1 = client.CoreV1Api()
 svc_list = v1.list_namespaced_service(namespace="argo", label_selector="app=sant,available=false")
-if (len(svc_list.items) < num):
-    logger.error("There are not enough nodeports to run this workflow.")
-else:
-    for np in svc_list.items[:num]:
-        v1.patch_namespaced_service(np.metadata.name, ns, get_body(user))
+print(svc_list)
+for np in svc_list.items[:num]:
+    v1.patch_namespaced_service(np.metadata.name, ns, get_body(user))

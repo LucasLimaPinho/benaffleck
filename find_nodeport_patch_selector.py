@@ -19,7 +19,7 @@ def get_body(user):
         "metadata": {
             "labels": {
                 "available": "false",
-                "app": "jobs",
+                "app": "sant",
                 "user": user
             }
         },
