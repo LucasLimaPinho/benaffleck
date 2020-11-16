@@ -58,6 +58,6 @@ spec:
         - name: SERVICE_NAME_01
           value: "{{inputs.parameters.svcname01}}"
         - name: SERVICE_NAME_02
-          value: "{{inputs.parameters.svcname01}}"
+          value: "{{inputs.parameters.svcname02}}"
 
 

@@ -3,6 +3,12 @@ from kubernetes import client, config
 import urllib3
 import sys
 import json
+import os
+
+svcname01 = os.environ['SERVICE_NAME_01']
+svcname02 = os.environ['SERVICE_NAME_02']
+print(svcname01)
+print(svcname02)
 
 # Number of nodePorts per pyspark notebook
 num = 2
