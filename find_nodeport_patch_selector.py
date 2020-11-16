@@ -14,13 +14,14 @@ ns = 'argo'
 user = 'x247451'
 
 # Body message to patch services
-def get_body(user):
+def get_body(user,svcname):
     body = {
         "metadata": {
             "labels": {
                 "available": "false",
                 "app": "sant",
-                "user": user
+                "user": user,
+                "svcname": svcname
             }
         },
         "spec": {
@@ -42,7 +43,7 @@ if (len(svc_list.items) < num):
     logger.error("There are not enough nodeports to run this workflow.")
 else:
     for np in svc_list.items[:num]:
-        v1.patch_namespaced_service(np.metadata.name, ns, get_body(user))
+        v1.patch_namespaced_service(np.metadata.name, ns, get_body(user,np.metadata.name))
         services.append(np.metadata.name)
 with open("/tmp/svcname1.txt","w") as f:
     f.write(services[0])

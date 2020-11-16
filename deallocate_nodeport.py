@@ -7,6 +7,7 @@ import os
 
 svcname01 = os.environ['SERVICE_NAME_01']
 svcname02 = os.environ['SERVICE_NAME_02']
+services = [svcname01,svcname02]
 print(svcname01)
 print(svcname02)
 
@@ -20,7 +21,7 @@ ns = 'argo'
 user = 'x247451'
 
 # Body message to patch services
-def get_body(user):
+def get_body():
     body = {
         "metadata": {
             "labels": {
@@ -40,7 +41,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 config.load_incluster_config()
 v1 = client.CoreV1Api()
-svc_list = v1.list_namespaced_service(namespace="argo", label_selector="app=sant,available=false")
-print(svc_list)
-for np in svc_list.items[:num]:
-    v1.patch_namespaced_service(np.metadata.name, ns, get_body(user))
+for service in services:
+    svc_list = v1.list_namespaced_service(namespace="argo", label_selector=f"app=sant,available=false,user={user},svcname={service}")
+    print(svc_list)
+    v1.patch_namespaced_service(np.metadata.name, ns, get_body())
