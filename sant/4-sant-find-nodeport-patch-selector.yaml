@@ -12,14 +12,29 @@ spec:
     - - name: allocate-nodeports
         template: allocate
     - - name: pyspark-executor
-        onExit: deallocate
         template: pyspark
+    - - name: deallocate-nodeports
+        template: deallocate
+        arguments:
+          parameters:
+          - name: svcname01
+            value: "{{steps.allocate-nodeports.outputs.parameters.svcname01}}"
+          - name: svcname02
+            value: "{{steps.allocate-nodeports.outputs.parameters.svcname02}}"
 
   - name: allocate
     container:
       image: pinholuc/gut-sant:latest
       command: [python]
       args: [./find_nodeport_patch_selector.py]
+    outputs:
+      parameters:
+      - name: svcname01
+        valueFrom:
+          path: /tmp/svcname1.txt
+      - name: svcname02
+        valueFrom:
+          path: /tmp/svcname2.txt
 
   - name: pyspark
     metadata:
@@ -31,9 +46,18 @@ spec:
       args: ["py-spark notebook executed. Next step is to deallocate nodeports :)"]
 
   - name: deallocate
+    inputs:
+      parameters:
+      - name: svcname01
+      - name: svcname02
     container:
       image: pinholuc/gut-sant:latest
       command: [python]
       args: [./deallocate_nodeport.py]
+    env:
+      - name: SERVICE_NAME_01
+        value: "{{inputs.parameters.svcname01}}"
+      - name: SERVICE_NAME_02
+        value: "{{inputs.parameters.svcname01}}"
 
 

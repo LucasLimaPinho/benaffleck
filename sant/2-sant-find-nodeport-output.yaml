@@ -88,8 +88,7 @@ spec:
         value: "{{inputs.parameters.nodeport1}}"
       - name: "{{inputs.parameters.serviceport2}}"
         value: "{{inputs.parameters.nodeport2}}"
-      image: ubuntu:latest
-      # Just spin & wait forever
-      command: [ "/bin/bash", "-c", "--" ]
-      args: [ "while true; do sleep 30; done;" ]
+      image: pinholuc/gut-sant:latest
+      command: [python]
+      args: [./test_environment_variables.py]
 
