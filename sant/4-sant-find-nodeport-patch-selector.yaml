@@ -26,10 +26,9 @@ spec:
       labels:
         user: x247451
     container:
-      image: ubuntu:latest
-      # Just spin & wait forever
-      command: [ "/bin/bash", "-c", "--" ]
-      args: [ "while true; do sleep 30; done;" ]
+      image: docker/whalesay:latest
+      command: [cowsay]
+      args: ["py-spark notebook executed. Next step is to deallocate nodeports :)"]
 
   - name: deallocate
     container:
