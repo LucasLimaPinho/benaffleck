@@ -12,6 +12,7 @@ spec:
     - - name: allocate-nodeports
         template: allocate
     - - name: pyspark-executor
+        onExit: deallocate
         template: pyspark
 
   - name: allocate
@@ -29,4 +30,11 @@ spec:
       # Just spin & wait forever
       command: [ "/bin/bash", "-c", "--" ]
       args: [ "while true; do sleep 30; done;" ]
+
+  - name: deallocate
+    container:
+      image: pinholuc/gut-sant:latest
+      command: [python]
+      args: [./deallocate_nodeport.py]
+
 
