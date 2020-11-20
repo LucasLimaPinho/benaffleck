@@ -54,10 +54,10 @@ with open("/tmp/svcname2.txt","w") as f:
     f.write(services[1])
     f.close()
 with open("/tmp/nodeport1.txt","w") as f:
-    f.write(nodeports[0])
+    f.write(str(nodeports[0]))
     f.close()
 with open("/tmp/nodeport2.txt","w") as f:
-    f.write(nodeports[1])
+    f.write(str(nodeports[1]))
     f.close()
 
 print(f"Services allocated: {services}")
