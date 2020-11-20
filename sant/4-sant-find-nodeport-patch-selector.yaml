@@ -62,24 +62,26 @@ spec:
         - name: ENVIRONMENT
           valueFrom:
             configMapKeyRef:
-              name: config
-              key: config.txt
-
+              name: special-config
+              key: ENVIRONMENT
+    restartPolicy: Never
 
   - name: pyspark-2
     metadata:
       labels:
         user: x247451
     container:
-      image: ubuntu:latest
-      command: [ "/bin/bash", "-c", "--" ]
-      args: [ "while true; do sleep 30; done;" ]
+      image: pinholuc/gut-sant:latest
+      command: [python]
+      args: [./test_env.py]
       env:
         - name: ENVIRONMENT
           valueFrom:
             configMapKeyRef:
-              name: config
-              key: config.txt
+              name: special-config
+              key: ENVIRONMENT
+    restartPolicy: Never
+
               
   - name: deallocate
     inputs:

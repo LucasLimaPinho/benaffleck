@@ -1,3 +1,1 @@
-kubectl create configmap config --from-file=config.txt --from-literal=extra-param=extra-value --from-literal=another-param=another-value
-
-kubectl get configmaps config -o yaml
+kubectl create configmap environment-config --from-file=ENVIRONMENT=config.txt -n argo
