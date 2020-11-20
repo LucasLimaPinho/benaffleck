@@ -9,10 +9,24 @@ spec:
   
   - name: find-nodeport
     steps:
+    
     - - name: allocate-nodeports
         template: allocate
-    - - name: pyspark-executor
-        template: pyspark
+    - - name: pyspark-executor-1
+        template: pyspark-1
+    - - name: deallocate-nodeports
+        template: deallocate
+        arguments:
+          parameters:
+          - name: svcname01
+            value: "{{steps.allocate-nodeports.outputs.parameters.svcname01}}"
+          - name: svcname02
+            value: "{{steps.allocate-nodeports.outputs.parameters.svcname02}}"
+
+    - - name: allocate-nodeports
+        template: allocate
+    - - name: pyspark-executor-2
+        template: pyspark-2
     - - name: deallocate-nodeports
         template: deallocate
         arguments:
@@ -36,14 +50,23 @@ spec:
         valueFrom:
           path: /tmp/svcname2.txt
 
-  - name: pyspark
+  - name: pyspark-1
     metadata:
       labels:
         user: x247451
     container:
       image: docker/whalesay:latest
       command: [cowsay]
-      args: ["py-spark notebook executed. Next step is to deallocate nodeports :)"]
+      args: ["Mia & Sebastian meow meow"]
+
+  - name: pyspark-2
+    metadata:
+      labels:
+        user: x247451
+    container:
+      image: ubuntu:latest
+      command: [ "/bin/bash", "-c", "--" ]
+      args: [ "while true; do sleep 30; done;" ]
 
   - name: deallocate
     inputs:
