@@ -51,3 +51,5 @@ with open("/tmp/svcname1.txt","w") as f:
 with open("/tmp/svcname2.txt","w") as f:
     f.write(services[1])
     f.close()
+    print(f"Services allocated: {services}")
+    print(svc_list) 

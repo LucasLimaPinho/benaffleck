@@ -45,3 +45,6 @@ for service in services:
     svc_list = v1.list_namespaced_service(namespace="argo", label_selector=f"app=sant,available=false,user={user},svcname={service}")
     print(svc_list)
     v1.patch_namespaced_service(service, ns, get_body())
+
+print(f"Services deallocated: {services}")
+print(svc_list)

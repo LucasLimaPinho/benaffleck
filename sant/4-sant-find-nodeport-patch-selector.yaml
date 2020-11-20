@@ -58,6 +58,20 @@ spec:
       image: docker/whalesay:latest
       command: [cowsay]
       args: ["Mia & Sebastian meow meow"]
+      env:
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: config.txt
+      volumeMounts:
+        - name: config-volume
+          mountPath: /config
+    volumes:
+      - name: config-volume
+        configMap:
+          name: config 
+    restartPolicy: Never
 
   - name: pyspark-2
     metadata:
@@ -67,6 +81,20 @@ spec:
       image: ubuntu:latest
       command: [ "/bin/bash", "-c", "--" ]
       args: [ "while true; do sleep 30; done;" ]
+      env:
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: config.txt
+      volumeMounts:
+        - name: config-volume
+          mountPath: /config
+    volumes:
+      - name: config-volume
+        configMap:
+          name: config 
+    restartPolicy: Never
 
   - name: deallocate
     inputs:
