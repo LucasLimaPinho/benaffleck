@@ -10,31 +10,31 @@ spec:
   - name: find-nodeport
     steps:
     
-    - - name: allocate-nodeports
+    - - name: allocate-nodeports-1
         template: allocate
     - - name: pyspark-executor-1
         template: pyspark-1
-    - - name: deallocate-nodeports
+    - - name: deallocate-nodeports-1
         template: deallocate
         arguments:
           parameters:
           - name: svcname01
-            value: "{{steps.allocate-nodeports.outputs.parameters.svcname01}}"
+            value: "{{steps.allocate-nodeports-1.outputs.parameters.svcname01}}"
           - name: svcname02
-            value: "{{steps.allocate-nodeports.outputs.parameters.svcname02}}"
+            value: "{{steps.allocate-nodeports-1.outputs.parameters.svcname02}}"
 
-    - - name: allocate-nodeports
+    - - name: allocate-nodeports-2
         template: allocate
     - - name: pyspark-executor-2
         template: pyspark-2
-    - - name: deallocate-nodeports
+    - - name: deallocate-nodeports-2
         template: deallocate
         arguments:
           parameters:
           - name: svcname01
-            value: "{{steps.allocate-nodeports.outputs.parameters.svcname01}}"
+            value: "{{steps.allocate-nodeports-2.outputs.parameters.svcname01}}"
           - name: svcname02
-            value: "{{steps.allocate-nodeports.outputs.parameters.svcname02}}"
+            value: "{{steps.allocate-nodeports-2.outputs.parameters.svcname02}}"
 
   - name: allocate
     container:
