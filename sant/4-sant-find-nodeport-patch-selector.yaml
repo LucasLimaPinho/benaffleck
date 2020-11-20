@@ -64,14 +64,7 @@ spec:
             configMapKeyRef:
               name: config
               key: config.txt
-      volumeMounts:
-        - name: config-volume
-          mountPath: /config
-    volumes:
-      - name: config-volume
-        configMap:
-          name: config 
-    restartPolicy: Never
+
 
   - name: pyspark-2
     metadata:
@@ -87,14 +80,7 @@ spec:
             configMapKeyRef:
               name: config
               key: config.txt
-      volumeMounts:
-        - name: config-volume
-          mountPath: /config
-    volumes:
-      - name: config-volume
-        configMap:
-          name: config 
-    restartPolicy: Never
+r
 
   - name: deallocate
     inputs:
