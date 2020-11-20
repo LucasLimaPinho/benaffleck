@@ -16,8 +16,10 @@ spec:
         template: pyspark-1
         arguments: 
           parameters: 
-            - name: nodeport1 
-              value: "{{steps.allocate-nodeports-1.outputs.parameters.nodeport1}}"
+          - name: nodeport1 
+            value: "{{steps.allocate-nodeports-1.outputs.parameters.nodeport1}}"
+          - name: nodeport2 
+            value: "{{steps.allocate-nodeports-1.outputs.parameters.nodeport2}}"
     - - name: deallocate-nodeports-1
         template: deallocate
         arguments:
@@ -33,8 +35,10 @@ spec:
         template: pyspark-2
         arguments: 
           parameters: 
-            - name: nodeport2 
-              value: "{{steps.allocate-nodeports-1.outputs.parameters.nodeport2}}"
+          - name: nodeport1 
+            value: "{{steps.allocate-nodeports-1.outputs.parameters.nodeport1}}"
+          - name: nodeport2 
+            value: "{{steps.allocate-nodeports-1.outputs.parameters.nodeport2}}"
     - - name: deallocate-nodeports-2
         template: deallocate
         arguments:
@@ -70,8 +74,8 @@ spec:
         user: x247451
     inputs:
       parameters:
-        - name: nodeport1 
-        - name: nodeport2
+      - name: nodeport1 
+      - name: nodeport2
     container:
       image: docker/whalesay:latest
       command: [cowsay]
@@ -101,8 +105,8 @@ spec:
         user: x247451
     inputs:
       parameters:
-        - name: nodeport1 
-        - name: nodeport2
+      - name: nodeport1 
+      - name: nodeport2
     container:
       image: pinholuc/gut-sant:latest
       command: [python]
