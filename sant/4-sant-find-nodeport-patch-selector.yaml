@@ -80,8 +80,7 @@ spec:
             configMapKeyRef:
               name: config
               key: config.txt
-r
-
+              
   - name: deallocate
     inputs:
       parameters:
