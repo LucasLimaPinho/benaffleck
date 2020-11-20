@@ -14,6 +14,10 @@ spec:
         template: allocate
     - - name: pyspark-executor-1
         template: pyspark-1
+        arguments: 
+          parameters: 
+            - name: nodeport1 
+              value: "{{steps.allocate-nodeports-1.outputs.parameters.nodeport1}}"
     - - name: deallocate-nodeports-1
         template: deallocate
         arguments:
@@ -27,6 +31,10 @@ spec:
         template: allocate
     - - name: pyspark-executor-2
         template: pyspark-2
+        arguments: 
+          parameters: 
+            - name: nodeport2 
+              value: "{{steps.allocate-nodeports-1.outputs.parameters.nodeport2}}"
     - - name: deallocate-nodeports-2
         template: deallocate
         arguments:
@@ -49,11 +57,21 @@ spec:
       - name: svcname02
         valueFrom:
           path: /tmp/svcname2.txt
+      - name: nodeport1 
+        valueFrom:
+          path: /tmp/nodeport1.txt
+      - name: nodeport2 
+        valueFrom: 
+          path: /tmp/nodeport2.txt
 
   - name: pyspark-1
     metadata:
       labels:
         user: x247451
+    inputs:
+      parameters:
+        - name: nodeport1 
+        - name: nodeport2
     container:
       image: docker/whalesay:latest
       command: [cowsay]
@@ -64,12 +82,27 @@ spec:
             configMapKeyRef:
               name: special-config
               key: ENVIRONMENT
+        - name: SPARK_DRIVER_PORT 
+          value: "{{inputs.parameters.nodeport1}}"
+        - name: SPARK_BLOCKMANAGER_PORT 
+          value: "{{inputs.parameters.nodeport2}}"
+        - name: SPARK_DRIVER_HOST
+          valueFrom:
+            fieldRef:
+              apiVersion: v1 
+              fieldPath: spec.nodeName
+        - name: SPARK_DRIVER_BINDADDRESS 
+          value: 0.0.0.0
     restartPolicy: Never
 
   - name: pyspark-2
     metadata:
       labels:
         user: x247451
+    inputs:
+      parameters:
+        - name: nodeport1 
+        - name: nodeport2
     container:
       image: pinholuc/gut-sant:latest
       command: [python]
@@ -80,6 +113,17 @@ spec:
             configMapKeyRef:
               name: special-config
               key: ENVIRONMENT
+        - name: SPARK_DRIVER_PORT 
+          value: "{{inputs.parameters.nodeport1}}"
+        - name: SPARK_BLOCKMANAGER_PORT 
+          value: "{{inputs.parameters.nodeport2}}"
+        - name: SPARK_DRIVER_HOST
+          valueFrom:
+            fieldRef:
+              apiVersion: v1 
+              fieldPath: spec.nodeName
+        - name: SPARK_DRIVER_BINDADDRESS 
+          value: 0.0.0.0
     restartPolicy: Never
 
               
