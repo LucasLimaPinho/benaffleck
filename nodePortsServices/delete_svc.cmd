@@ -1,0 +1,1 @@
+kubectl delete svc -n argo sant-01 sant-02 sant-03 sant-04 sant-05 sant-06 sant-07 sant-08

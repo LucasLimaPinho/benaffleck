@@ -1,0 +1,1 @@
+kubectl create -f 1-nodePort01.yaml -f 2-nodePort02.yaml -f 3-nodePort03.yaml -f 4-nodePort04.yaml -f 5-nodePort05.yaml -f 6-nodePort06.yaml -f 7-nodePort07.yaml -f 8-nodePort08.yaml
