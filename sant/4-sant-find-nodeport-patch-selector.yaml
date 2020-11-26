@@ -108,9 +108,7 @@ spec:
       - name: nodeport1 
       - name: nodeport2
     container:
-      image: pinholuc/gut-sant:latest
-      command: [python]
-      args: [./test_env.py]
+      image: jupyter/pyspark-notebook
       env:
         - name: ENVIRONMENT
           valueFrom:
@@ -128,8 +126,11 @@ spec:
               fieldPath: spec.nodeName
         - name: SPARK_DRIVER_BINDADDRESS 
           value: 0.0.0.0
+        - name: HADOOP_HOME
+          value: /usr/local/hadoop
+        - name: HADOOP_CONF_DIR
+          value: /usr/local/hadoop/etc/hadoop
     restartPolicy: Never
-
               
   - name: deallocate
     inputs:
