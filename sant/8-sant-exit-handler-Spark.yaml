@@ -13,9 +13,8 @@ metadata:
   namespace: argo
 spec:
   entrypoint: intentional-fail
-  onExit: exit-handler
+
   templates:
-  # primary workflow template
   - name: intentional-fail
     steps: 
       - - name: fail
@@ -24,34 +23,38 @@ spec:
             failed: true
       - - name: success 
           template: success
-
-  # exit handler related templates
-  # After the completion of the entrypoint template, the status of the
-  # workflow is made available in the global variable {{workflow.status}}.
-  # {{workflow.status}} will be one of: Succeeded, Failed, Error
-  - name: exit-handler
-    script:
-      image: python:alpine3.6
-      command: [python]
-      source: |
-        import sys
-        if {{workflow.failures}} == "null":
-          print("{{workflow.name}} was successfull! :)")
-          sys.exit(0)
-        else:
-          print("{{workflow.name}} failed!")
-          print("Details about the steps the failed: ")
-          print({{workflows.failures}})
-          print("You can check the logs in each step.")
-          sys.exit(1)
-
-  - name: fail 
+      - - name: check-status-workflow
+          template: check-status
+          arguments:
+            parameters:
+            - name: exitcode
+              value: "{{steps.fail.outputs.parameters.exitcode}}"
+        
+  - name: fail
+    outputs:
+      parameters:
+      - name: exitcode
+        valueFrom:
+          path: /tmp/exitcode.txt 
     container:
       image: alpine:latest
       command: [sh, -c]
-      args: ["echo intentional failure; exit 1"]
+      args: ["echo intentional failure; echo 0 > /tmp/exitcode.txt; cat /tmp/exitcode.txt; exit 0"]
+  
   - name: success
     container:
       image: alpine:latest
       command: [sh, -c]
       args: ["echo Success!; exit 0"]
+
+  - name: check-status
+    inputs:
+      parameters:
+      - name: exitcode
+    container:
+      image: alpine:latest
+      command: [sh, -c]
+      env:
+        - name: EXIT_CODE
+          value: "{{inputs.parameters.exitcode}}"
+      args: ["echo Aleluia; exit $EXIT_CODE"]
